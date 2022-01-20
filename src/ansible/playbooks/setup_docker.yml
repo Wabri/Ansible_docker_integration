@@ -1,0 +1,8 @@
+---
+- hosts: docker_server
+  name: Install docker
+  become: yes
+  # è necessario eseguire un --fix-broken
+  roles:
+    - role: "nickjj.docker"
+      tags: ["docker"]
