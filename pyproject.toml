@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "broccoli"
+version = "0.1.0"
+description = "Temp"
+authors = ["Wabri <gabriele.puliti@pm.me>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+ansible = "^5.2.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

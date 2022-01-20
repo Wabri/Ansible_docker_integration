@@ -1,2 +1,5 @@
 # Vagrant metadata
 .vagrant
+
+# Poetry lock
+poetry.lock
