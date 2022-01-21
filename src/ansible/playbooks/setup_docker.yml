@@ -4,5 +4,19 @@
   become: yes
   # è necessario eseguire un --fix-broken
   roles:
-    - role: "nickjj.docker"
+    - name: Install docker
+      role: "nickjj.docker"
       tags: ["docker"]
+  tasks:
+    - name: update docker deamon configuration
+      template:
+          src: ../templates/docker.j2
+          dest: /etc/default/docker
+          owner: root
+          group: root
+          mode: '0644'
+    - name: Enable Docker service
+      service:
+        name: docker
+        enabled: yes
+        state: started
