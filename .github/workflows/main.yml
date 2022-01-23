@@ -26,7 +26,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Lint Ansible Playbook
-        uses: iranzo/ansible-lint-action@master
+        uses: ansible/ansible-lint-action@151b9a2
         with:
-          targets: "./src/ansible/playbooks"
+          targets: "./"
           args: "--no-color"
