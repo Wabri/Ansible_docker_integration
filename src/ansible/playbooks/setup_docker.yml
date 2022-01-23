@@ -1,8 +1,7 @@
 ---
-- hosts: docker_server
+- hosts: all
   name: Install docker
   become: yes
-  # è necessario eseguire un --fix-broken
   roles:
     - name: Install docker
       role: "nickjj.docker"
@@ -20,3 +19,29 @@
         name: docker
         enabled: yes
         state: started
+
+- hosts: master-1
+  name: Setup docker swarm
+  become: yes
+  tasks:
+    - name: Initialize the cluster on {{hostvars[inventory_hostname]['ansible_default_ipv4']['address']}}
+      shell: docker swarm init --advertise-addr {{hostvars[inventory_hostname]['ansible_default_ipv4']['address']}}
+
+    - name: Get worker join command
+      shell: docker swarm join-token worker
+      register: worker_join_command_raw
+
+    - name: Set worker join command
+      set_fact:
+        worker_join_command: "{{ worker_join_command_raw.stdout_lines[2] }}"
+
+- hosts: worker-1
+  name: Join worker to cluster
+  become: yes
+  tasks:
+    - name: Workers join cluster
+      shell: "{{ hostvars['masters'].worker_join_command }} >> node_joined.txt"
+      args:
+        chdir: $HOME
+        creates: node_joined.txt
+
