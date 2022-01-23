@@ -1,8 +1,14 @@
 ---
-- hosts: docker_server
+- hosts: all
+  name: Update packages
+  become: yes
+  tasks:
+    - name: Update fix missing
+      shell: apt-get update --fix-missing
+
+- hosts: all
   name: Install docker
   become: yes
-  # è necessario eseguire un --fix-broken
   roles:
     - name: Install docker
       role: "nickjj.docker"
@@ -20,3 +26,33 @@
         name: docker
         enabled: yes
         state: started
+
+- hosts: masters
+  name: Setup docker swarm
+  become: yes
+  tasks:
+    - name: Initialize the cluster on {{hostvars[inventory_hostname].ip}}
+      shell: docker swarm init --advertise-addr {{hostvars[inventory_hostname].ip}}
+
+    - name: Get worker join command
+      shell: docker swarm join-token worker
+      register: worker_join_command_raw
+
+    - name: Set worker join command
+      set_fact:
+        worker_join_command: "{{ worker_join_command_raw.stdout_lines[2] }}"
+
+    - name: "worker_join_command"
+      debug:
+        msg: "{{ worker_join_command }}"
+
+- hosts: workers
+  name: Join worker to cluster
+  become: yes
+  tasks:
+    - name: "worker_join_command"
+      debug:
+        msg: "{{ hostvars['master-1'].worker_join_command }}"
+    - name: Workers join cluster
+      shell: "{{ hostvars['master-1'].worker_join_command }}"
+
