@@ -28,5 +28,5 @@ jobs:
       - name: Lint Ansible Playbook
         uses: iranzo/ansible-lint-action@master
         with:
-          targets: ""
+          targets: "./src/ansible/playbooks"
           args: "--no-color"
