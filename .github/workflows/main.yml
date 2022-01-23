@@ -30,3 +30,4 @@ jobs:
         uses: ansible/ansible-lint-action@master
         with:
           targets: "src/ansible/playbooks/"
+          args: "--nocolor"
